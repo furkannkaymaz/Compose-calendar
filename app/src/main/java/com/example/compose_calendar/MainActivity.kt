@@ -2,6 +2,7 @@ package com.example.compose_calendar
 
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.capitalize
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +66,7 @@ fun Greeting(name: String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SimpleCalendar() {
+    val context = LocalContext.current
     var selectedYear by remember { mutableStateOf(2023) }
     var chosenYear by remember { mutableStateOf(2023) }
     var selectedMonth by remember { mutableStateOf(Calendar.FEBRUARY) }
@@ -103,7 +106,7 @@ fun SimpleCalendar() {
             }
         }
         Row(Modifier.fillMaxWidth()) {
-            val weekdays = listOf("Sat","Sun", "Mon", "Tue", "Wed", "Thu", "Fri", )
+            val weekdays = listOf("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
             weekdays.forEach {
                 Text(
                     text = it,
@@ -121,14 +124,22 @@ fun SimpleCalendar() {
             val emptyCells = List(firstDayOfWeek - 1) { null }
             val daysInMonth = firstDayOfMonth.lengthOfMonth()
 
-            items(emptyCells.size + daysInMonth+2) { dayOfMonth ->
+            items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
                 val day = dayOfMonth - emptyCells.size - 1
-                val textColor = if ((day + firstDayOfWeek - 3) % 7 == 5 || (day + firstDayOfWeek - 3) % 7 == 6) Color.Red else Color.Black
+                val textColor =
+                    if ((day + firstDayOfWeek - 3) % 7 == 5 || (day + firstDayOfWeek - 3) % 7 == 6) Color.Red else Color.Black
                 Text(
                     text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
                     textAlign = TextAlign.Center,
                     color = textColor,
-                    modifier = Modifier.padding(4.dp).height(40.dp)
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .height(40.dp)
+                        .clickable {
+                            Toast
+                                .makeText(context, day.toString(), Toast.LENGTH_LONG)
+                                .show()
+                        }
                 )
             }
         }
