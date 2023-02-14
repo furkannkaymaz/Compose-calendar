@@ -13,6 +13,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,12 +47,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposecalendarTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Greeting("Android")
+                    MainPage()
                 }
             }
         }
@@ -58,9 +60,8 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Greeting(name: String) {
+fun MainPage() {
     SimpleCalendar()
-
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -74,10 +75,13 @@ fun SimpleCalendar() {
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
 
-    Column {
+    Column() {
         Row {
-            Text("Select a year:      ", Modifier.clickable { expanded = true })
-            Text(chosenYear.toString(), Modifier.clickable { expanded = true })
+            Row(modifier = Modifier.padding(16.dp)) {
+                Text("Select a year:", Modifier.clickable { expanded = true })
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(chosenYear.toString(), Modifier.clickable { expanded = true })
+            }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 for (year in 2020..2030) {
                     DropdownMenuItem(onClick = {
@@ -91,8 +95,12 @@ fun SimpleCalendar() {
             }
         }
         Row {
-            Text("Select a month:            ", Modifier.clickable { expandedMonth = true })
-            Text(chosenMonth, Modifier.clickable { expandedMonth = true })
+            Row(modifier = Modifier.padding(16.dp)) {
+                Text("Select a month:", Modifier.clickable { expandedMonth = true })
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(chosenMonth, Modifier.clickable { expandedMonth = true })
+            }
+
             DropdownMenu(expanded = expandedMonth, onDismissRequest = { expandedMonth = false }) {
                 for (month in Month.values()) {
                     DropdownMenuItem(onClick = {
@@ -105,6 +113,7 @@ fun SimpleCalendar() {
                 }
             }
         }
+        Spacer(modifier = Modifier.height(32.dp))
         Row(Modifier.fillMaxWidth()) {
             val weekdays = listOf("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
             weekdays.forEach {
@@ -116,11 +125,10 @@ fun SimpleCalendar() {
                 )
             }
         }
-
         val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth + 1, 1)
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
-
-        LazyVerticalGrid(columns = GridCells.Fixed(7)) {
+        Spacer(modifier = Modifier.height(8.dp))
+        LazyVerticalGrid(columns = GridCells.Fixed(7),) {
             val emptyCells = List(firstDayOfWeek - 1) { null }
             val daysInMonth = firstDayOfMonth.lengthOfMonth()
 
@@ -143,6 +151,7 @@ fun SimpleCalendar() {
                 )
             }
         }
+
     }
 }
 
@@ -152,6 +161,6 @@ fun SimpleCalendar() {
 @Composable
 fun DefaultPreview() {
     ComposecalendarTheme {
-        Greeting("Android")
+        MainPage()
     }
 }
