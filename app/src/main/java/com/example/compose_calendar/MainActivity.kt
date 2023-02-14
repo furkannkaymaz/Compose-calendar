@@ -127,6 +127,7 @@ fun SimpleCalendar() {
                 }
             }
         }
+        // Add a row for displaying weekdays
         Row(Modifier.fillMaxWidth()) {
             val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
             weekdays.forEach {
@@ -139,19 +140,29 @@ fun SimpleCalendar() {
             }
         }
 
+        // Get the first day of the selected month
         val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth + 1, 1)
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
 
+
+
         LazyVerticalGrid(columns = GridCells.Fixed(7)) {
-            items(daysInMonth) { dayOfMonth ->
-                val date = LocalDate.of(selectedYear, selectedMonth + 1, dayOfMonth + 1)
-                val textColor = if (date.dayOfWeek == DayOfWeek.SUNDAY) Color.Red else Color.Black
-                Text(
-                    text = dayOfMonth.plus(1).toString(),
-                    textAlign = TextAlign.Center,
-                    color = textColor,
-                    modifier = Modifier.padding(4.dp)
-                )
+
+            val emptyCells = List(firstDayOfWeek - 1) { "" }
+
+            items(emptyCells.size + daysInMonth) { dayOfMonth ->
+                if (dayOfMonth < emptyCells.size) {
+                    Text(text = "", modifier = Modifier.padding(4.dp))
+                } else {
+                    val date = LocalDate.of(selectedYear, selectedMonth + 1, dayOfMonth - emptyCells.size + 1)
+                    val textColor = if (date.dayOfWeek == DayOfWeek.SUNDAY) Color.Red else Color.Black
+                    Text(
+                        text = (dayOfMonth - emptyCells.size + 1).toString(),
+                        textAlign = TextAlign.Center,
+                        color = textColor,
+                        modifier = Modifier.padding(4.dp)
+                    )
+                }
             }
         }
     }
