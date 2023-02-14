@@ -71,65 +71,39 @@ fun SimpleCalendar() {
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
 
-    val daysInMonth by remember( selectedYear, selectedMonth) {
-        val year = Year.of(selectedYear)
-        val month = Month.values()[selectedMonth]
-        month.length(year.isLeap)
-        mutableStateOf(month.length(year.isLeap))
-    }
-
-    Column() {
+    Column {
         Row {
-            Text(
-                "Select a year:      ",
-                Modifier.clickable {
-                    expanded = true
-                },
-            )
-            Text(
-                text = chosenYear.toString(),
-                Modifier.clickable {
-                    expanded = true
-                },
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
+            Text("Select a year:      ", Modifier.clickable { expanded = true })
+            Text(chosenYear.toString(), Modifier.clickable { expanded = true })
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 for (year in 2020..2030) {
-                    DropdownMenuItem(onClick = { selectedYear = year }) {
-                        Text(year.toString(), color = Color.Black, modifier = Modifier.clickable {
-                            expanded = false
-                            chosenYear = year
-                        })
+                    DropdownMenuItem(onClick = {
+                        selectedYear = year
+                        expanded = false
+                        chosenYear = year
+                    }) {
+                        Text(year.toString())
                     }
                 }
             }
         }
         Row {
-            Text("Select a month:            ", modifier = Modifier.clickable {
-                expandedMonth = true
-            })
-            Text(chosenMonth.toString())
-            DropdownMenu(
-                expanded = expandedMonth,
-                onDismissRequest = { },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
+            Text("Select a month:            ", Modifier.clickable { expandedMonth = true })
+            Text(chosenMonth, Modifier.clickable { expandedMonth = true })
+            DropdownMenu(expanded = expandedMonth, onDismissRequest = { expandedMonth = false }) {
                 for (month in Month.values()) {
-                    DropdownMenuItem(onClick = { selectedMonth = month.ordinal }) {
-                        Text(month.name.lowercase().capitalize(Locale.ROOT), modifier = Modifier.clickable {
-                            expandedMonth = false
-                            chosenMonth = month.name
-                        })
+                    DropdownMenuItem(onClick = {
+                        selectedMonth = month.ordinal
+                        expandedMonth = false
+                        chosenMonth = month.name
+                    }) {
+                        Text(month.name.lowercase().capitalize(Locale.ROOT))
                     }
                 }
             }
         }
-        // Add a row for displaying weekdays
         Row(Modifier.fillMaxWidth()) {
-            val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+            val weekdays = listOf("Sat","Sun", "Mon", "Tue", "Wed", "Thu", "Fri", )
             weekdays.forEach {
                 Text(
                     text = it,
@@ -140,29 +114,22 @@ fun SimpleCalendar() {
             }
         }
 
-        // Get the first day of the selected month
         val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth + 1, 1)
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
 
-
-
         LazyVerticalGrid(columns = GridCells.Fixed(7)) {
+            val emptyCells = List(firstDayOfWeek - 1) { null }
+            val daysInMonth = firstDayOfMonth.lengthOfMonth()
 
-            val emptyCells = List(firstDayOfWeek - 1) { "" }
-
-            items(emptyCells.size + daysInMonth) { dayOfMonth ->
-                if (dayOfMonth < emptyCells.size) {
-                    Text(text = "", modifier = Modifier.padding(4.dp))
-                } else {
-                    val date = LocalDate.of(selectedYear, selectedMonth + 1, dayOfMonth - emptyCells.size + 1)
-                    val textColor = if (date.dayOfWeek == DayOfWeek.SUNDAY) Color.Red else Color.Black
-                    Text(
-                        text = (dayOfMonth - emptyCells.size + 1).toString(),
-                        textAlign = TextAlign.Center,
-                        color = textColor,
-                        modifier = Modifier.padding(4.dp)
-                    )
-                }
+            items(emptyCells.size + daysInMonth+2) { dayOfMonth ->
+                val day = dayOfMonth - emptyCells.size - 1
+                val textColor = if ((day + firstDayOfWeek - 3) % 7 == 5 || (day + firstDayOfWeek - 3) % 7 == 6) Color.Red else Color.Black
+                Text(
+                    text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                    modifier = Modifier.padding(4.dp).height(40.dp)
+                )
             }
         }
     }
