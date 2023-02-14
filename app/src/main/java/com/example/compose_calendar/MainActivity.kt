@@ -127,6 +127,20 @@ fun SimpleCalendar() {
                 }
             }
         }
+        Row(Modifier.fillMaxWidth()) {
+            val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+            weekdays.forEach {
+                Text(
+                    text = it,
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+
+        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth + 1, 1)
+        val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
 
         LazyVerticalGrid(columns = GridCells.Fixed(7)) {
             items(daysInMonth) { dayOfMonth ->
@@ -144,6 +158,7 @@ fun SimpleCalendar() {
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
