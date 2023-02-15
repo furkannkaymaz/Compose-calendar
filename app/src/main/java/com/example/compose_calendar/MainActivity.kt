@@ -71,7 +71,7 @@ fun SimpleCalendar() {
     var selectedYear by remember { mutableStateOf(2023) }
     var chosenYear by remember { mutableStateOf(2023) }
     var selectedMonth by remember { mutableStateOf(Calendar.FEBRUARY) }
-    var chosenMonth by remember { mutableStateOf(LocalDate.now().year) }
+    var chosenMonth by remember { mutableStateOf("FEBRUARY") }
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
 
@@ -106,7 +106,7 @@ fun SimpleCalendar() {
                     DropdownMenuItem(onClick = {
                         selectedMonth = month.ordinal
                         expandedMonth = false
-                        chosenMonth = month.ordinal
+                        chosenMonth = month.name
                     }) {
                         Text(month.name.lowercase().capitalize(Locale.ROOT))
                     }
@@ -115,7 +115,7 @@ fun SimpleCalendar() {
         }
         Spacer(modifier = Modifier.height(32.dp))
         Row(Modifier.fillMaxWidth()) {
-            val weekdays = listOf("Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri")
+            val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri","Sat","Sun")
             weekdays.forEach {
                 Text(
                     text = it,
@@ -135,7 +135,7 @@ fun SimpleCalendar() {
             items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
                 val day = dayOfMonth - emptyCells.size - 1
                 val textColor =
-                    if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
+                    if ((day + firstDayOfWeek - 3) % 7 == 2 || (day + firstDayOfWeek - 3) % 7 == 3) Color.Red else Color.Black
                 Text(
                     text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
                     textAlign = TextAlign.Center,
