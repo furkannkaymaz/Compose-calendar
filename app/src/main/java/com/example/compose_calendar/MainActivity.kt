@@ -133,9 +133,9 @@ fun SimpleCalendar() {
             val daysInMonth = firstDayOfMonth.lengthOfMonth()
 
             items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
-                val day = dayOfMonth - emptyCells.size - 1
+                val day = dayOfMonth - emptyCells.size +1
                 val textColor =
-                    if ((day + firstDayOfWeek - 3) % 7 == 2 || (day + firstDayOfWeek - 3) % 7 == 3) Color.Red else Color.Black
+                    if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
                 Text(
                     text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
                     textAlign = TextAlign.Center,
