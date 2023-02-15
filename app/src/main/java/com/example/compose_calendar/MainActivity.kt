@@ -1,8 +1,10 @@
 package com.example.compose_calendar
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.TextClock
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +21,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.compose_calendar.ui.theme.ComposecalendarTheme
 import java.text.DateFormatSymbols
+import java.time.DateTimeException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -75,8 +79,6 @@ fun SimpleCalendar() {
 
     val dateList = remember { mutableStateListOf<LocalDate>() }
 
-
-
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Row {
             Row(modifier = Modifier.padding(16.dp)) {
@@ -85,7 +87,7 @@ fun SimpleCalendar() {
                 Text(chosenYear.toString(), Modifier.clickable { expanded = true })
             }
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                for (year in 2020..2030) {
+                for (year in 1960..2030) {
                     DropdownMenuItem(onClick = {
                         selectedYear = year
                         expanded = false
@@ -133,25 +135,39 @@ fun SimpleCalendar() {
         LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier.height(250.dp)) {
             val emptyCells = List(firstDayOfWeek - 1) { null }
             val daysInMonth = firstDayOfMonth.lengthOfMonth()
-
             items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
                 val day = dayOfMonth - emptyCells.size + 1
                 val textColor = if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
-                Text(
-                    text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
-                    textAlign = TextAlign.Center,
-                    color = textColor,
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .height(40.dp)
-                        .clickable(
-                            enabled = !(day <= 0 || day > daysInMonth)
-                        ) {
+                var backgroundColor = Color.Transparent
 
-                            sendDate = LocalDate.of(selectedYear, selectedMonth, day)
-                            onDateClick(sendDate, dateList)
-                        },
-                )
+                if (day >= 1 || day > daysInMonth){
+                    val currentDate = try {
+                        LocalDate.of(selectedYear, selectedMonth, day)
+                    }catch (e : DateTimeException){
+                        null
+                    }
+                    backgroundColor = if (dateList.contains(currentDate)) Color.Cyan else Color.Transparent
+                }
+
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
+                        textAlign = TextAlign.Center,
+                        color = textColor,
+                        modifier = Modifier
+                            .background(backgroundColor)
+                            .width(32.dp)
+                            .height(32.dp)
+                            .clickable(
+                                enabled = !(day <= 0 || day > daysInMonth)
+                            ) {
+
+                                sendDate = LocalDate.of(selectedYear, selectedMonth, day)
+                                onDateClick(sendDate, dateList)
+                            },
+                    )
+                }
+
             }
         }
         LazyColumn(
@@ -165,7 +181,6 @@ fun SimpleCalendar() {
                 Spacer(modifier = Modifier.height(5.dp))
             }
         }
-
 
     }
 }
