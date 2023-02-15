@@ -71,7 +71,7 @@ fun SimpleCalendar() {
     var selectedYear by remember { mutableStateOf(2023) }
     var chosenYear by remember { mutableStateOf(2023) }
     var selectedMonth by remember { mutableStateOf(Calendar.FEBRUARY) }
-    var chosenMonth by remember { mutableStateOf("FEBRUARY") }
+    var chosenMonth by remember { mutableStateOf(LocalDate.now().year) }
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
 
@@ -98,7 +98,7 @@ fun SimpleCalendar() {
             Row(modifier = Modifier.padding(16.dp)) {
                 Text("Select a month:", Modifier.clickable { expandedMonth = true })
                 Spacer(modifier = Modifier.width(16.dp))
-                Text(chosenMonth, Modifier.clickable { expandedMonth = true })
+                Text(chosenMonth.toString(), Modifier.clickable { expandedMonth = true })
             }
 
             DropdownMenu(expanded = expandedMonth, onDismissRequest = { expandedMonth = false }) {
@@ -106,7 +106,7 @@ fun SimpleCalendar() {
                     DropdownMenuItem(onClick = {
                         selectedMonth = month.ordinal
                         expandedMonth = false
-                        chosenMonth = month.name
+                        chosenMonth = month.ordinal
                     }) {
                         Text(month.name.lowercase().capitalize(Locale.ROOT))
                     }
@@ -135,7 +135,7 @@ fun SimpleCalendar() {
             items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
                 val day = dayOfMonth - emptyCells.size - 1
                 val textColor =
-                    if ((day + firstDayOfWeek - 3) % 7 == 5 || (day + firstDayOfWeek - 3) % 7 == 6) Color.Red else Color.Black
+                    if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
                 Text(
                     text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
                     textAlign = TextAlign.Center,
@@ -143,10 +143,13 @@ fun SimpleCalendar() {
                     modifier = Modifier
                         .padding(4.dp)
                         .height(40.dp)
-                        .clickable {
+                        .clickable(
+                            enabled = !(day <= 0 || day > daysInMonth)
+                        ) {
                             Toast
                                 .makeText(context, day.toString(), Toast.LENGTH_LONG)
                                 .show()
+
                         }
                 )
             }
