@@ -71,7 +71,6 @@ fun SimpleCalendar() {
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
 
-    var selectedDates by remember { mutableStateOf(listOf<LocalDate>()) }
 
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
@@ -124,7 +123,7 @@ fun SimpleCalendar() {
                 )
             }
         }
-        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth + 1, 1)
+        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth , 1)
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
         Spacer(modifier = Modifier.height(8.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier.height(250.dp)) {
