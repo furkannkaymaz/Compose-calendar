@@ -17,11 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -68,12 +64,15 @@ fun MainPage() {
 @Composable
 fun SimpleCalendar() {
     val context = LocalContext.current
-    var selectedYear by remember { mutableStateOf(2023) }
-    var chosenYear by remember { mutableStateOf(2023) }
-    var selectedMonth by remember { mutableStateOf(Calendar.FEBRUARY) }
-    var chosenMonth by remember { mutableStateOf("FEBRUARY") }
+    var selectedYear by remember { mutableStateOf(LocalDate.now().year) }
+    var chosenYear by remember { mutableStateOf(LocalDate.now().year) }
+    var selectedMonth by remember { mutableStateOf(LocalDate.now().month) }
+    var chosenMonth by remember { mutableStateOf(LocalDate.now().month.name) }
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
+
+    var selectedDates by remember { mutableStateOf(listOf<LocalDate>()) }
+
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
         Row {
@@ -104,7 +103,7 @@ fun SimpleCalendar() {
             DropdownMenu(expanded = expandedMonth, onDismissRequest = { expandedMonth = false }) {
                 for (month in Month.values()) {
                     DropdownMenuItem(onClick = {
-                        selectedMonth = month.ordinal
+                        selectedMonth = month
                         expandedMonth = false
                         chosenMonth = month.name
                     }) {
