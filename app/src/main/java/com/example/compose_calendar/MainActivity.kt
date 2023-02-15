@@ -2,6 +2,7 @@ package com.example.compose_calendar
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -70,6 +71,9 @@ fun SimpleCalendar() {
     var chosenMonth by remember { mutableStateOf(LocalDate.now().month.name) }
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
+    var sendDate by remember { mutableStateOf(LocalDate.now()) }
+
+    val dateList = remember { mutableStateListOf<LocalDate>() }
 
 
 
@@ -113,7 +117,7 @@ fun SimpleCalendar() {
         }
         Spacer(modifier = Modifier.height(32.dp))
         Row(Modifier.fillMaxWidth()) {
-            val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri","Sat","Sun")
+            val weekdays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
             weekdays.forEach {
                 Text(
                     text = it,
@@ -123,7 +127,7 @@ fun SimpleCalendar() {
                 )
             }
         }
-        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth , 1)
+        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth, 1)
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
         Spacer(modifier = Modifier.height(8.dp))
         LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier.height(250.dp)) {
@@ -131,9 +135,8 @@ fun SimpleCalendar() {
             val daysInMonth = firstDayOfMonth.lengthOfMonth()
 
             items(emptyCells.size + daysInMonth + 2) { dayOfMonth ->
-                val day = dayOfMonth - emptyCells.size +1
-                val textColor =
-                    if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
+                val day = dayOfMonth - emptyCells.size + 1
+                val textColor = if ((day + firstDayOfWeek - 3) % 7 == 4 || (day + firstDayOfWeek - 3) % 7 == 5) Color.Red else Color.Black
                 Text(
                     text = if (day <= 0 || day > daysInMonth) " " else day.toString(),
                     textAlign = TextAlign.Center,
@@ -144,16 +147,35 @@ fun SimpleCalendar() {
                         .clickable(
                             enabled = !(day <= 0 || day > daysInMonth)
                         ) {
-                            Toast
-                                .makeText(context, day.toString(), Toast.LENGTH_LONG)
-                                .show()
 
-                        }
+                            sendDate = LocalDate.of(selectedYear, selectedMonth, day)
+                            onDateClick(sendDate, dateList)
+                        },
                 )
+            }
+        }
+        LazyColumn(
+            Modifier
+                .height(250.dp)
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            items(dateList.size) { date ->
+                Text(text = dateList.get(date).toString())
+                Spacer(modifier = Modifier.height(5.dp))
             }
         }
 
 
+    }
+}
+
+fun onDateClick(date: LocalDate, dateList: MutableList<LocalDate>) {
+
+    if (dateList.contains(date)) {
+        dateList.remove(date)
+    } else {
+        dateList.add(date)
     }
 }
 
