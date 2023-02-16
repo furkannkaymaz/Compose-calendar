@@ -54,11 +54,14 @@ fun MainPage() {
 @Composable
 fun SimpleCalendar() {
     var selectedYear by remember { mutableStateOf(LocalDate.now().year) }
-    var chosenYear by remember { mutableStateOf(LocalDate.now().year) }
     var selectedMonth by remember { mutableStateOf(LocalDate.now().month) }
+
+    var chosenYear by remember { mutableStateOf(LocalDate.now().year) }
     var chosenMonth by remember { mutableStateOf(LocalDate.now().month.name) }
+
     var expanded by remember { mutableStateOf(false) }
     var expandedMonth by remember { mutableStateOf(false) }
+
     var sendDate by remember { mutableStateOf(LocalDate.now()) }
 
     val dateList = remember { mutableStateListOf<LocalDate>() }
