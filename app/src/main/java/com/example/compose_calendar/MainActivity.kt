@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose_calendar.ui.theme.APP_BG
+import com.example.compose_calendar.ui.theme.CHOSEN_DATE
 import com.example.compose_calendar.ui.theme.ComposecalendarTheme
 import java.time.DateTimeException
 import java.time.LocalDate
@@ -72,7 +73,7 @@ fun SimpleCalendar() {
         val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
 
         Row {
-            Row(modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.padding(16.dp,8.dp)) {
                 Text("Select a year:", Modifier.clickable { expanded = true },fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(chosenYear.toString(), Modifier.clickable { expanded = true })
@@ -90,7 +91,7 @@ fun SimpleCalendar() {
             }
         }
         Row {
-            Row(modifier = Modifier.padding(16.dp)) {
+            Row(modifier = Modifier.padding(16.dp,8.dp)) {
                 Text("Select a month:", Modifier.clickable { expandedMonth = true },fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(chosenMonth.toString(), Modifier.clickable { expandedMonth = true })
@@ -108,8 +109,7 @@ fun SimpleCalendar() {
                 }
             }
         }
-        Row(
-            Modifier
+        Row(Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
                 .border(BorderStroke(2.dp, Color.Black))) {
@@ -125,9 +125,9 @@ fun SimpleCalendar() {
                 )
             }
         }
-        Box(Modifier.padding(16.dp).border(BorderStroke(1.dp, Color.Black))) {
+        Box(Modifier.padding(16.dp,0.dp).border(BorderStroke(1.dp, Color.Black))) {
             LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier
-                .height(195.dp)
+                .height(185.dp)
                 .padding(0.dp,8.dp)
                 ) {
                 val emptyCells = List(firstDayOfWeek - 1) { null }
@@ -145,7 +145,7 @@ fun SimpleCalendar() {
                             null
                         }
                         backgroundColor =
-                            if (dateList.contains(currentDate)) Color.Gray else Color.Transparent
+                            if (dateList.contains(currentDate)) CHOSEN_DATE else Color.Transparent
                     }
                     Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
@@ -169,11 +169,11 @@ fun SimpleCalendar() {
                 }
             }
         }
-        Text("Chosen Dates:", Modifier.padding(16.dp),fontWeight = FontWeight.Bold)
+        Text("Chosen Dates:", Modifier.padding(16.dp,6.dp),fontWeight = FontWeight.Bold)
         LazyColumn(
             Modifier
                 .height(350.dp)
-                .padding(16.dp)
+                .padding(16.dp,8.dp)
                 .fillMaxWidth()
         ) {
             items(dateList.size) { date ->
