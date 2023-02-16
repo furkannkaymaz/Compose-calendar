@@ -53,7 +53,6 @@ fun MainPage() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SimpleCalendar() {
-    val context = LocalContext.current
     var selectedYear by remember { mutableStateOf(LocalDate.now().year) }
     var chosenYear by remember { mutableStateOf(LocalDate.now().year) }
     var selectedMonth by remember { mutableStateOf(LocalDate.now().month) }
@@ -65,6 +64,10 @@ fun SimpleCalendar() {
     val dateList = remember { mutableStateListOf<LocalDate>() }
 
     Column(Modifier.verticalScroll(rememberScrollState()).background(APP_BG)) {
+
+        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth, 1)
+        val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
+
         Row {
             Row(modifier = Modifier.padding(16.dp)) {
                 Text("Select a year:", Modifier.clickable { expanded = true },fontWeight = FontWeight.Bold)
@@ -119,9 +122,6 @@ fun SimpleCalendar() {
                 )
             }
         }
-        val firstDayOfMonth = LocalDate.of(selectedYear, selectedMonth, 1)
-        val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value
-
         Box(Modifier.padding(16.dp).border(BorderStroke(1.dp, Color.Black))) {
             LazyVerticalGrid(columns = GridCells.Fixed(7), modifier = Modifier
                 .height(195.dp)
@@ -156,7 +156,6 @@ fun SimpleCalendar() {
                                 .clickable(
                                     enabled = !(day <= 0 || day > daysInMonth)
                                 ) {
-
                                     sendDate = LocalDate.of(selectedYear, selectedMonth, day)
                                     onDateClick(sendDate, dateList)
                                 },
